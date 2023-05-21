@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultGallery from 'components/DefaultGallery/DefaultGallery';
 import ApiService from '../../ApiService/ApiService';
 import Loader from 'components/Loader/Loader';
@@ -11,123 +11,78 @@ import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 import DefaultImg from '../../images/search.jpg';
 
-class App extends Component {
-  state = {
-    value: '',
-    gallery: [],
+const Status = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+  RESOLVED: 'resolved',
+  REJECTED: 'rejected',
+};
 
-    showModal: false,
-    modalData: { img: DefaultImg },
 
-    page: 1,
-    totalPages: 0,
+function App() {
+  const [value, setValue] = useState('');
+  const [gallery, setGallery] = useState([]);
 
-    status: 'idle',
-    error: null,
+  const [showModal, setShowModal] = useState(false);
+  const [modalData, setModalData] = useState({ img: DefaultImg });
 
-    // isLoading: false,  // Варіант 2
-  };
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { page } = this.state;
-    const prevName = prevState.value;
-    const nextName = this.state.value;
+  const [status, setStatus] = useState(Status.IDLE);
+  const [error, setError] = useState(null);
 
-    if (prevName !== nextName || prevState.page !== page) {
-      this.setState({ status: 'pending' });
+  // const [isLoading, setIsLoading] = useState(false);
 
-      // this.setState({ isLoading: true });  // Варіант 2
-
-      if (this.state.error) {
-        this.setState({ error: null });
-      }
-
-      ApiService(nextName, page)
-        .then(gallery => {
-          this.setState(prevState => ({
-            gallery:
-              page === 1
-                ? gallery.hits
-                : [...prevState.gallery, ...gallery.hits],
-            totalPages: Math.floor(gallery.totalHits / 12),
-            status: 'resolved',
-          }));
-        })
-        .catch(error => this.setState({ error, status: 'rejected' }))
-        .finally(() => {
-          this.setState({ isLoading: false });
-        });
+  useEffect(() => {
+    if (value === '') {
+      return;
     }
-  }
 
-  formResetSubmit = value => {
-    this.setState({
-      page: 1,
-    });
-    this.setState({
-      gallery: [],
-    });
-    this.setState({
-      value,
-    });
+    if (error) {
+      setError(null);
+    }
+
+    setStatus(Status.PENDING);
+
+    ApiService(value, page)
+      .then(gallery => {
+        setGallery(prevState => [...prevState, ...gallery.hits]);
+        setTotalPages(Math.floor(gallery.totalHits / 12));
+        setStatus(Status.RESOLVED);
+      })
+      .catch(error => {
+        setError(error)
+        setStatus(Status.REJECTED);
+      })
+  }, [value, page, error]);
+
+  const formResetSubmit = value => {
+    setPage(1);
+    setGallery([]);
+    setValue(value);
   };
 
-  showModal = modalData => {
-    this.setState({ modalData, showModal: true });
+  const showModals = modalData => {
+    setShowModal(true);
+    setModalData(modalData);
   };
 
-  loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const loadMore = () => {
+    setPage(page => page + 1);
   };
 
-  onClose = () => {
-    this.setState({ showModal: false });
+  const onClose = () => {
+    setShowModal(false);
   };
 
-  // Варіант 2
-
-  // render() {
-  //   const {
-  //     gallery,
-  //     error,
-  //     status,
-  //     page,
-  //     totalPages,
-  //     showModal,
-  //     modalData,
-  //     isLoading,
-  //   } = this.state;
-
-  //   return (
-  //     <div>
-  //       <SearchBar
-  //         onSubmit={this.formResetSubmit}
-  //         resetPage={page}
-  //         resetGallery={gallery}
-  //       />
-  //        {isLoading && <Loader />}
-  //       { (
-  //         <ImageGallery gallery={gallery} showModal={this.showModal} />
-  //       )}
-  //       {showModal && <Modal modalData={modalData} onClose={this.onClose} />}
-  //       {gallery.length > 0 && status !== 'pending' && page <= totalPages && (
-  //         <Button onClick={this.loadMore}>Load More</Button>
-  //       )}
-  //     </div>
-  //   );
-  // }
-
-  render() {
-    const { gallery, error, status, page, totalPages, showModal, modalData } =
-      this.state;
-
-    if (status === 'idle') {
+    if (status === Status.IDLE) {
       return (
         <>
           <ToastContainer />
 
           <SearchBar
-            onSubmit={this.formResetSubmit}
+            onSubmit={formResetSubmit}
             resetPage={page}
             resetGallery={gallery}
           />
@@ -137,31 +92,31 @@ class App extends Component {
       );
     }
 
-    if (status === 'pending') {
+    if (status === Status.PENDING) {
       return (
         <>
           <SearchBar
-            onSubmit={this.formResetSubmit}
+            onSubmit={formResetSubmit}
             resetPage={page}
             resetGallery={gallery}
           />
 
           <Loader />
 
-          <ImageGallery gallery={gallery} showModal={this.showModal} />
+          <ImageGallery gallery={gallery} showModal={showModals} />
 
           {gallery.length > 0 && status !== 'pending' && page <= totalPages && (
-            <Button onClick={this.loadMore}>Load More</Button>
+            <Button onClick={loadMore}>Load More</Button>
           )}
         </>
       );
     }
 
-    if (status === 'rejected') {
+    if (status === Status.REJECTED) {
       return (
         <>
           <SearchBar
-            onSubmit={this.formResetSubmit}
+            onSubmit={formResetSubmit}
             resetPage={page}
             resetGallery={gallery}
           />
@@ -174,7 +129,7 @@ class App extends Component {
       return (
         <>
           <SearchBar
-            onSubmit={this.formResetSubmit}
+            onSubmit={formResetSubmit}
             resetPage={page}
             resetGallery={gallery}
           />
@@ -185,28 +140,27 @@ class App extends Component {
       );
     }
 
-    if (status === 'resolved') {
+    if (status === Status.RESOLVED) {
       return (
         <>
           <ToastContainer />
 
           <SearchBar
-            onSubmit={this.formResetSubmit}
+            onSubmit={formResetSubmit}
             resetPage={page}
             resetGallery={gallery}
           />
 
-          <ImageGallery gallery={gallery} showModal={this.showModal} />
+          <ImageGallery gallery={gallery} showModal={showModals} />
 
           {gallery.length > 0 && status !== 'pending' && page <= totalPages && (
-            <Button onClick={this.loadMore}>Load More</Button>
+            <Button onClick={loadMore}>Load More</Button>
           )}
 
-          {showModal && <Modal modalData={modalData} onClose={this.onClose} />}
+          {showModal && <Modal modalData={modalData} onClose={onClose} />}
         </>
       );
     }
-  }
 }
 
 export default App;

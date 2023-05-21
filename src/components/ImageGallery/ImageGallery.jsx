@@ -5,14 +5,15 @@ import { Gallery } from './ImageGallery.styled';
 function ImageGallery({ gallery, showModal }) {
   return (
     <Gallery>
-      {gallery.map(({ id, webformatURL, largeImageURL }) => (
-        <ImageGalleryItem
-          key={id}
-          webformatURL={webformatURL}
-          largeImageURL={largeImageURL}
-          showModal={showModal}
-        />
-      ))}
+      {gallery &&
+        gallery.map(({ id, webformatURL, largeImageURL }) => (
+          <ImageGalleryItem
+            key={id}
+            webformatURL={webformatURL}
+            largeImageURL={largeImageURL}
+            showModal={showModal}
+          />
+        ))}
     </Gallery>
   );
 }
