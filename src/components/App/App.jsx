@@ -32,8 +32,6 @@ function App() {
   const [status, setStatus] = useState(Status.IDLE);
   const [error, setError] = useState(null);
 
-  // const [isLoading, setIsLoading] = useState(false);
-
   useEffect(() => {
     if (value === '') {
       return;

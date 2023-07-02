@@ -69,6 +69,8 @@ export const Input = styled.input`
   outline: none;
   padding-left: 10px;
   padding-right: 10px;
+  color:#2196f3;
+
   &::placeholder {
     font: inherit;
     font-size: 18px;
