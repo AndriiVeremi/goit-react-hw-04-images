@@ -15,7 +15,7 @@ export const Header = styled.header`
   padding-top: 12px;
   padding-bottom: 12px;
   color: #fff;
-  background-color: #f2eb22;
+  background-color: #2d5c57;
   box-shadow: inset 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
     0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 `;
@@ -69,7 +69,7 @@ export const Input = styled.input`
   outline: none;
   padding-left: 10px;
   padding-right: 10px;
-  color:#2196f3;
+  color:#2d5c57;
 
   &::placeholder {
     font: inherit;

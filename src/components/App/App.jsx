@@ -85,7 +85,7 @@ function App() {
             resetGallery={gallery}
           />
 
-          <DefaultGallery text="Let`s find images!" />
+          <DefaultGallery text="Let's go find images!" />
         </>
       );
     }

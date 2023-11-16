@@ -3,12 +3,12 @@ import styled from '@emotion/styled';
 export const Buttons = styled.button`
   padding: 8px 16px;
   border-radius: 2px;
-  background-color: #2196f3;
+  background-color: #90c2b0;
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
   display: block;
   margin: 0 auto;
-  color: #fff;
+  color: #2d5c57;
   border: 0;
   text-decoration: none;
   cursor: pointer;
@@ -22,6 +22,7 @@ export const Buttons = styled.button`
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
   &:hover,
   &:focus {
-    background-color: #ebeb3d;
+    background-color: #2d5c57 ;
+    color: #90c2b0;
   }
 `;

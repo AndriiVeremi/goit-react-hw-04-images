@@ -6,8 +6,8 @@ import { Wrapper, Text, Img } from './ErrorGallery.styled';
 function ImageErrorView({ message }) {
     return (
         <Wrapper>
-            <Text>{message}</Text>
-            <Img src={error} width="350" alt="error" />           
+            <Text className='animate__animated animate__bounceInDown'>{message}</Text>
+            <Img className='animate__animated animate__zoomInUp' src={error} width="370" alt="error" />           
         </Wrapper>
     );
 }
